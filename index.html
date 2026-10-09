@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NABARD FIN-03 | Climate-Aware Credit Risk Assessment Engine</title>
+  
+  <!-- SEO & Meta Tags -->
+  <meta name="description" content="Dynamic Climate-Aware Agricultural Credit Risk Assessment System for NABARD integrating satellite crop NDVI, weather forecasts, soil moisture, crop yield forecasting, and SHAP explainability.">
+  <meta name="keywords" content="NABARD, Credit Risk, Climate Risk, Agriculture Finance, Crop Yield Prediction, SHAP, Satellite NDVI">
+
+  <!-- External Stylesheets & Libraries -->
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  
+  <!-- Chart.js & Leaflet JS -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="navbar">
+    <div class="brand">
+      <div class="brand-logo">N</div>
+      <div class="brand-text">
+        <h1>NABARD FIN-03</h1>
+        <p>Climate-Aware Credit Risk Engine</p>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+      <button class="nav-tab active" data-tab="tab-overview">
+        <i data-lucide="layout-dashboard"></i> Portfolio Overview
+      </button>
+      <button class="nav-tab" data-tab="tab-assessment">
+        <i data-lucide="calculator"></i> Borrower Credit Assessor
+      </button>
+      <button class="nav-tab" data-tab="tab-simulator">
+        <i data-lucide="sliders"></i> Stress Simulator & XAI
+      </button>
+      <button class="nav-tab" data-tab="tab-satellite">
+        <i data-lucide="globe"></i> Satellite & Geospatial
+      </button>
+      <button class="nav-tab" data-tab="tab-analytics">
+        <i data-lucide="line-chart"></i> Yield Model & Data
+      </button>
+    </nav>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="main-container">
+
+    <!-- TAB 1: EXECUTIVE PORTFOLIO OVERVIEW -->
+    <section id="tab-overview" class="tab-content active">
+      <!-- KPI Cards -->
+      <div class="kpi-grid">
+        <div class="glass-card kpi-card">
+          <span class="kpi-label">Total Agricultural Portfolio</span>
+          <span class="kpi-value">₹ 314.2 Cr</span>
+          <span class="kpi-sub">Across 9,860 Active Borrowers</span>
+        </div>
+        <div class="glass-card kpi-card warning">
+          <span class="kpi-label">Climate-Exposed Loan Risk</span>
+          <span class="kpi-value">₹ 64.8 Cr</span>
+          <span class="kpi-sub negative"><i data-lucide="trending-up"></i> 20.6% High Climate Stress</span>
+        </div>
+        <div class="glass-card kpi-card">
+          <span class="kpi-label">Avg Portfolio Risk Score</span>
+          <span class="kpi-value">694 / 900</span>
+          <span class="kpi-sub"><i data-lucide="shield-check"></i> Climate-Adjusted Benchmark</span>
+        </div>
+        <div class="glass-card kpi-card">
+          <span class="kpi-label">Forecasted Expected Loss (EL)</span>
+          <span class="kpi-value">₹ 4.12 Cr</span>
+          <span class="kpi-sub negative">1.31% Portfolio Loss Rate</span>
+        </div>
+      </div>
+
+      <!-- Charts & High-Risk Zones Grid -->
+      <div class="grid-2col">
+        <div class="glass-card">
+          <div class="card-header">
+            <h2 class="card-title"><i data-lucide="pie-chart"></i> Portfolio Credit Decision Distribution</h2>
+          </div>
+          <canvas id="chartPortfolioDistribution" height="220"></canvas>
+        </div>
+        <div class="glass-card">
+          <div class="card-header">
+            <h2 class="card-title"><i data-lucide="bar-chart-2"></i> District-Wise Climate Risk Score Exposure</h2>
+          </div>
+          <canvas id="chartDistrictExposure" height="220"></canvas>
+        </div>
+      </div>
+
+      <!-- District Risk Heatmap Table -->
+      <div class="glass-card">
+        <div class="card-header">
+          <h2 class="card-title"><i data-lucide="map-pin"></i> Agricultural District Vulnerability Index</h2>
+        </div>
+        <div class="table-responsive">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>District / Region</th>
+                <th>Primary Crop</th>
+                <th>Irrigation</th>
+                <th>Avg Temp</th>
+                <th>Rainfall Anomaly</th>
+                <th>Avg Yield (t/ha)</th>
+                <th>Active Exposure</th>
+                <th>Risk Level</th>
+              </tr>
+            </thead>
+            <tbody id="districtTableBody">
+              <!-- Dynamically populated from JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: BORROWER CREDIT RISK ASSESSOR -->
+    <section id="tab-assessment" class="tab-content">
+      <div class="grid-main-side">
+        <!-- Borrower Application Form -->
+        <div class="glass-card">
+          <div class="card-header">
+            <h2 class="card-title"><i data-lucide="file-text"></i> Borrower & Agronomic Input Parameters</h2>
+            <button id="btnLoadPresetVidarbha" class="btn-primary" style="width: auto; padding: 6px 14px; font-size: 0.8rem;">
+              ⚡ Load High-Risk Vidarbha Preset
+            </button>
+            <button id="btnLoadPresetPunjab" class="btn-primary" style="width: auto; padding: 6px 14px; font-size: 0.8rem; background: linear-gradient(135deg, var(--cyan), var(--primary));">
+              ⚡ Load Low-Risk Punjab Preset
+            </button>
+          </div>
+
+          <form id="creditForm">
+            <div class="grid-3col">
+              <div class="form-group">
+                <label>Applicant Name</label>
+                <input type="text" id="applicantName" class="form-control" value="Ramesh Patil">
+              </div>
+              <div class="form-group">
+                <label>District / Zone</label>
+                <select id="districtSelect" class="form-control">
+                  <!-- Options filled by JS -->
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Crop Type</label>
+                <select id="cropType" class="form-control">
+                  <option value="Cotton">Cotton (Kharif)</option>
+                  <option value="Wheat">Wheat (Rabi)</option>
+                  <option value="Paddy">Paddy / Rice</option>
+                  <option value="Soybean">Soybean</option>
+                  <option value="Sugarcane">Sugarcane</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid-3col">
+              <div class="form-group">
+                <label>Loan Amount (₹)</label>
+                <input type="number" id="loanAmount" class="form-control" value="250000" step="10000">
+              </div>
+              <div class="form-group">
+                <label>Land Area (Acres)</label>
+                <input type="number" id="landAcres" class="form-control" value="5" step="0.5">
+              </div>
+              <div class="form-group">
+                <label>Past CIBIL Score (300-900)</label>
+                <input type="number" id="cibilScore" class="form-control" value="710">
+              </div>
+            </div>
+
+            <div class="grid-3col">
+              <div class="form-group">
+                <label>Irrigation Type</label>
+                <select id="irrigationType" class="form-control">
+                  <option value="Rainfed">Rainfed (High Risk)</option>
+                  <option value="Canal & Tube-well">Canal / Tube-well (Irrigated)</option>
+                  <option value="Drip Irrigation">Solar Drip Irrigation (Resilient)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Collateral Value (₹)</label>
+                <input type="number" id="collateralValue" class="form-control" value="350000" step="10000">
+              </div>
+              <div class="form-group">
+                <label>Market Price (₹/quintal)</label>
+                <input type="number" id="apmcPrice" class="form-control" value="4800">
+              </div>
+            </div>
+
+            <h3 style="font-family: var(--font-heading); font-size: 0.95rem; margin: 1rem 0 0.8rem; color: var(--cyan);">
+              🧪 Agronomic Soil & Climate Dataset Inputs (Kaggle Schema)
+            </h3>
+
+            <div class="grid-3col">
+              <div class="form-group">
+                <label>Fertilizer Application (kg/ha): <span id="valFert" class="range-val">75</span></label>
+                <input type="range" id="fertilizer" class="range-slider" min="40" max="100" value="75">
+              </div>
+              <div class="form-group">
+                <label>Avg Temperature (°C): <span id="valTemp" class="range-val">28°C</span></label>
+                <input type="range" id="temp" class="range-slider" min="20" max="42" value="28">
+              </div>
+              <div class="form-group">
+                <label>Monsoon Rain Anomaly (%): <span id="valRain" class="range-val">-15%</span></label>
+                <input type="range" id="rainfallDeficitPct" class="range-slider" min="-50" max="30" value="-15">
+              </div>
+            </div>
+
+            <div class="grid-3col">
+              <div class="form-group">
+                <label>Nitrogen - N (kg/ha): <span id="valN" class="range-val">75</span></label>
+                <input type="range" id="inputN" class="range-slider" min="40" max="100" value="75">
+              </div>
+              <div class="form-group">
+                <label>Phosphorus - P (kg/ha): <span id="valP" class="range-val">22</span></label>
+                <input type="range" id="inputP" class="range-slider" min="12" max="32" value="22">
+              </div>
+              <div class="form-group">
+                <label>Potassium - K (kg/ha): <span id="valK" class="range-val">19</span></label>
+                <input type="range" id="inputK" class="range-slider" min="10" max="30" value="19">
+              </div>
+            </div>
+
+            <button type="button" id="btnCalculateRisk" class="btn-primary" style="margin-top: 1rem;">
+              🚀 Run Climate-Aware Credit Assessment
+            </button>
+          </form>
+        </div>
+
+        <!-- Real-time Credit Assessment Result Card -->
+        <div class="glass-card decision-card">
+          <h2 class="card-title" style="justify-content: center; margin-bottom: 1.5rem;">
+            <i data-lucide="shield-alert"></i> Climate Risk Credit Decision
+          </h2>
+
+          <div class="score-gauge-container">
+            <canvas id="gaugeCanvas" width="200" height="200"></canvas>
+            <div class="score-number" id="resultScore">704</div>
+          </div>
+
+          <div id="resultBadgeContainer" style="margin-bottom: 1.2rem;">
+            <span class="badge badge-warning" id="resultBadge">CONDITIONAL APPROVAL</span>
+          </div>
+
+          <p id="resultReason" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+            Subject to climate crop insurance top-up.
+          </p>
+
+          <div style="text-align: left; background: rgba(255, 255, 255, 0.02); padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border-glass);">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.85rem;">
+              <span style="color: var(--text-muted);">ML Yield Estimate:</span>
+              <strong id="resultYield" style="color: var(--cyan);">10.8 t/ha</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.85rem;">
+              <span style="color: var(--text-muted);">Gross Farm Revenue:</span>
+              <strong id="resultRevenue">₹ 2,59,200</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.85rem;">
+              <span style="color: var(--text-muted);">Debt Service Coverage (DSCR):</span>
+              <strong id="resultDSCR" style="color: var(--emerald);">1.42x</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.85rem;">
+              <span style="color: var(--text-muted);">Climate Default Prob (PD):</span>
+              <strong id="resultPD" style="color: var(--rose);">12.4%</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+              <span style="color: var(--text-muted);">Loss Given Default (LGD):</span>
+              <strong id="resultLGD">28.5%</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: CLIMATE STRESS SIMULATOR & EXPLAINABILITY (XAI) -->
+    <section id="tab-simulator" class="tab-content">
+      <div class="grid-2col">
+        <!-- Interactive Stress Controls -->
+        <div class="glass-card">
+          <div class="card-header">
+            <h2 class="card-title"><i data-lucide="sliders"></i> Dynamic Climate Stress Test Knobs</h2>
+          </div>
+
+          <div class="form-group">
+            <label>Heatwave Temperature (°C): <span id="simValTemp" class="range-val">34°C</span></label>
+            <input type="range" id="simTemp" class="range-slider" min="25" max="44" value="34">
+          </div>
+
+          <div class="form-group">
+            <label>Monsoon Rainfall Deficit (%): <span id="simValRain" class="range-val">-35%</span></label>
+            <input type="range" id="simRain" class="range-slider" min="-60" max="20" value="-35">
+          </div>
+
+          <div class="form-group">
+            <label>Soil Moisture Index (0.0 to 1.0): <span id="simValSoil" class="range-val">0.25</span></label>
+            <input type="range" id="simSoil" class="range-slider" min="0.10" max="0.80" step="0.05" value="0.25">
+          </div>
+
+          <div class="form-group">
+            <label>APMC Market Price Collapse (%): <span id="simValPrice" class="range-val">-20%</span></label>
+            <input type="range" id="simPrice" class="range-slider" min="-50" max="10" value="-20">
+          </div>
+
+          <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(239, 68, 68, 0.08); border-radius: var(--radius-sm); border: 1px solid rgba(239, 68, 68, 0.2);">
+            <div style="font-weight: 600; color: var(--rose); font-size: 0.88rem; margin-bottom: 4px;">
+              ⚠️ Severe Climate Scenario Output:
+            </div>
+            <div style="font-size: 0.85rem; color: var(--text-muted);" id="simScenarioText">
+              Under +34°C heat & -35% rainfall deficit, farmer probability of default increases from 6.2% to 26.8%.
+            </div>
+          </div>
+        </div>
+
+        <!-- SHAP Waterfall Feature Attribution Breakdown -->
+        <div class="glass-card">
+          <div class="card-header">
+            <h2 class="card-title"><i data-lucide="cpu"></i> SHAP Explainability Risk Driver Breakdown</h2>
+          </div>
+
+          <div class="shap-list" id="shapContainer">
+            <!-- Dynamically populated from SHAP Engine -->
+          </div>
+
+          <div class="recommendation-box" id="simRecommendations">
+            <!-- Actionable mitigation suggestions -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: GEOSPATIAL & SATELLITE MONITOR -->
+    <section id="tab-satellite" class="tab-content">
+      <div class="glass-card" style="margin-bottom: 1.5rem;">
+        <div class="card-header">
+          <h2 class="card-title"><i data-lucide="globe"></i> Real-Time District Satellite & NDVI Vegetation Health Map</h2>
+          <div style="display: flex; gap: 10px;">
+            <button id="btnLayerNDVI" class="btn-primary" style="width: auto; padding: 4px 12px; font-size: 0.8rem;">NDVI Vegetation Layer</button>
+            <button id="btnLayerSoil" class="btn-primary" style="width: auto; padding: 4px 12px; font-size: 0.8rem; background: var(--cyan);">Root-Zone Soil Moisture</button>
+          </div>
+        </div>
+        
+        <!-- Interactive Leaflet Map Container -->
+        <div id="map"></div>
+      </div>
+    </section>
+
+    <!-- TAB 5: YIELD MODEL & KAGGLE DATASET ANALYTICS -->
+    <section id="tab-analytics" class="tab-content">
+      <div class="grid-2col">
+        <div class="glass-card">
+          <div class="card-header">
+            <h2 class="card-title"><i data-lucide="scatter-chart"></i> Fertilizer Application vs Crop Yield</h2>
+          </div>
+          <canvas id="chartFertVsYield" height="240"></canvas>
+        </div>
+        <div class="glass-card">
+          <div class="card-header">
+            <h2 class="card-title"><i data-lucide="thermometer-snowflake"></i> Temperature (°C) vs Yield Decay Curve</h2>
+          </div>
+          <canvas id="chartTempVsYield" height="240"></canvas>
+        </div>
+      </div>
+
+      <div class="glass-card">
+        <div class="card-header">
+          <h2 class="card-title"><i data-lucide="database"></i> Kaggle / Zenodo Reference Dataset Sample Preview</h2>
+        </div>
+        <div class="table-responsive">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Fertilizer (kg/ha)</th>
+                <th>Temp (°C)</th>
+                <th>Nitrogen (N)</th>
+                <th>Phosphorus (P)</th>
+                <th>Potassium (K)</th>
+                <th>Crop Yield (t/ha)</th>
+                <th>Climate Stress Category</th>
+              </tr>
+            </thead>
+            <tbody id="rawDatasetBody">
+              <!-- Dynamically populated from RAW_AGRICULTURAL_DATASET -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Load JavaScript Controllers -->
+  <script src="js/data.js"></script>
+  <script src="js/yield_model.js"></script>
+  <script src="js/risk_engine.js"></script>
+  <script src="js/explainability.js"></script>
+  <script src="js/app.js"></script>
+
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+  </script>
+</body>
+</html>
