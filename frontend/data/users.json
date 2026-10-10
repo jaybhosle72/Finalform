@@ -1,0 +1,108 @@
+[
+  {
+    "username": "farmer1",
+    "password_hash": "72eda9f4a3043c62e4b6cbc473d18c48cf56e751c19bd60bd21d69bc70548de6",
+    "role": "farmer",
+    "farmer_id": "DEMO001",
+    "full_name": "Ramesh Patil",
+    "district": "Dharwad",
+    "state": "Karnataka",
+    "phone": "+91 98765 43201"
+  },
+  {
+    "username": "farmer2",
+    "password_hash": "72eda9f4a3043c62e4b6cbc473d18c48cf56e751c19bd60bd21d69bc70548de6",
+    "role": "farmer",
+    "farmer_id": "DEMO002",
+    "full_name": "Suresh Kumar",
+    "district": "Pune",
+    "state": "Maharashtra",
+    "phone": "+91 98765 43202"
+  },
+  {
+    "username": "farmer3",
+    "password_hash": "72eda9f4a3043c62e4b6cbc473d18c48cf56e751c19bd60bd21d69bc70548de6",
+    "role": "farmer",
+    "farmer_id": "DEMO003",
+    "full_name": "Vijay Sharma",
+    "district": "Jaipur",
+    "state": "Rajasthan",
+    "phone": "+91 98765 43203"
+  },
+  {
+    "username": "officer1",
+    "password_hash": "dbff68280ffd593043b0e8b68a8bb9491a9cc558b258f2b94caa6af344f58111",
+    "role": "bank_officer",
+    "officer_id": "OFFICER_001",
+    "full_name": "Anil Deshmukh (Credit Officer)",
+    "branch": "NABARD Hubli-Dharwad Branch"
+  },
+  {
+    "username": "officer2",
+    "password_hash": "dbff68280ffd593043b0e8b68a8bb9491a9cc558b258f2b94caa6af344f58111",
+    "role": "bank_officer",
+    "officer_id": "OFFICER_002",
+    "full_name": "Priya Singh (Regional Credit Manager)",
+    "branch": "NABARD State Headquarters"
+  },
+  {
+    "username": "testfarmer",
+    "password_hash": "4a14a3bccd12941d9c362858aa3f563b09ea8faeada88e9e02b193ef3f99c059",
+    "role": "farmer",
+    "farmer_id": "DEMO106",
+    "full_name": "Test Farmer User",
+    "district": "Dharwad",
+    "state": "Karnataka",
+    "phone": "+91 98765 99999"
+  },
+  {
+    "username": "jaybhosler@gmail.com",
+    "email": "jaybhosler@gmail.com",
+    "google_sub": "111748691605172443027",
+    "full_name": "Jay Bhosle",
+    "role": "farmer",
+    "auth_provider": "google",
+    "farmer_id": "DEMO107",
+    "officer_id": null,
+    "district": "Dharwad",
+    "state": "Karnataka"
+  },
+  {
+    "username": "new_officer_test",
+    "password_hash": "5941c0e321991ebf9f86401ceb3c4719b72130411d40de207a48930678b97d90",
+    "role": "bank_officer",
+    "officer_id": "OFFICER_003",
+    "full_name": "Test Officer",
+    "designation": "Junior Officer",
+    "branch": "NABARD / Regional Rural Bank"
+  },
+  {
+    "username": "test_farmer_312",
+    "password_hash": "aca9c25724c458d8ee849fdc8248308022a13a1b3d4de22ef18817f864ba910f",
+    "role": "farmer",
+    "farmer_id": "DEMO109",
+    "full_name": "Test Farmer User",
+    "district": "Dharwad",
+    "state": "Karnataka",
+    "phone": "+91 99999 88888"
+  },
+  {
+    "username": "test_farmer_250",
+    "password_hash": "aca9c25724c458d8ee849fdc8248308022a13a1b3d4de22ef18817f864ba910f",
+    "role": "farmer",
+    "farmer_id": "DEMO110",
+    "full_name": "Test Farmer User",
+    "district": "Dharwad",
+    "state": "Karnataka",
+    "phone": "+91 99999 88888"
+  },
+  {
+    "username": "auth_officer_test",
+    "password_hash": "5941c0e321991ebf9f86401ceb3c4719b72130411d40de207a48930678b97d90",
+    "role": "bank_officer",
+    "officer_id": "OFFICER_004",
+    "full_name": "Authorized Officer",
+    "designation": "Senior Officer",
+    "branch": "NABARD / Regional Rural Bank"
+  }
+]

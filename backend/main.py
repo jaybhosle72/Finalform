@@ -1,5 +1,5 @@
 """
-NABARD Climate-Aware Credit Risk Application Backend Server
+AgriSure Climate-Aware Credit Risk Application Backend Server
 Exposes Phase 2 endpoints for real environmental telemetry: Open-Meteo Weather, Copernicus Sentinel-2 Satellite, and ISRIC SoilGrids.
 """
 
@@ -52,7 +52,7 @@ pdf_generator = PDFReportGenerator()
 
 if FASTAPI_AVAILABLE:
     app = FastAPI(
-        title="NABARD Climate Telemetry & Credit Risk API",
+        title="AgriSure Climate Telemetry & Credit Risk API",
         description="Phase 2 Real Environmental Telemetry API: Open-Meteo Weather, Copernicus Sentinel-2, & ISRIC SoilGrids.",
         version="2.0.0"
     )
@@ -88,33 +88,10 @@ if FASTAPI_AVAILABLE:
         if os.path.exists(index_path):
             return FileResponse(index_path)
         return {
-            "system": "NABARD Climate-Aware Credit Risk System API",
+            "system": "AgriSure Climate-Aware Credit Risk System API",
             "phase": "Phase 2 Environmental Telemetry Active",
             "version": "2.0.0"
         }
-
-    SPA_PAGE_ROUTES = {"auth", "dashboard", "loans", "crops", "climate", "risk", "officer"}
-
-    @app.get("/auth/google/callback")
-    @app.get("/auth/google/callback/")
-    @app.get("/api/auth/google/callback")
-    @app.get("/api/auth/google/callback/")
-    def top_level_google_auth_callback(
-        code: Optional[str] = Query(None),
-        state: Optional[str] = Query(None),
-        error: Optional[str] = Query(None),
-        iss: Optional[str] = Query(None)
-    ):
-        from auth_service import google_auth_callback
-        return google_auth_callback(code=code, state=state, error=error, iss=iss)
-
-    @app.get("/{page_route}")
-    def serve_spa_page(page_route: str):
-        if page_route.lower() in SPA_PAGE_ROUTES:
-            index_path = os.path.join(project_root, "index.html")
-            if os.path.exists(index_path):
-                return FileResponse(index_path)
-        raise HTTPException(status_code=404, detail=f"Endpoint or page '/{page_route}' not found.")
 
     # Endpoint 1: Open-Meteo Weather API
     @app.get("/api/v2/climate/weather")
@@ -177,5 +154,5 @@ if FASTAPI_AVAILABLE:
 
 if __name__ == "__main__":
     import uvicorn
-    print("[NABARD Backend] Launching Phase 2 Telemetry Server on http://localhost:8000 ...")
+    print("[AgriSure Backend] Launching Phase 2 Telemetry Server on http://localhost:8000 ...")
     uvicorn.run(app, host="0.0.0.0", port=8000)
